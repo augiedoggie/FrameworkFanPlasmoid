@@ -1,0 +1,23 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "",
+                "Name": "Chris Roberts"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Controls the fan profile of a Framework 16 laptop via fw-fanctrl",
+        "Icon": "framework",
+        "Id": "org.kde.fwfanctrl",
+        "License": "MIT",
+        "Name": "Framework Fan Control",
+        "Version": "1.0.0",
+        "Website": "https://github.com/augiedoggie/FrameworkFanPlasmoid",
+        "EnabledByDefault": true
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-NotificationArea": true,
+    "X-Plasma-NotificationAreaCategory": "SystemServices"
+}
