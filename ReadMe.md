@@ -9,14 +9,15 @@ command-line tool.
 ## Features
 
 - **Tray icon** shows the Framework logo in the system tray. Hovering shows the active profile name in the tooltip.
-- **Popup panel** has two tabs:
-  - **Available Profiles** — lists all available profiles with a checkmark next to the active one. Click any profile to apply it; the popup can be configured to close automatically.
+- **Popup panel** has three tabs:
+  - **Fan Profiles** — lists all available profiles with a checkmark next to the active one. Click any profile to apply it; the popup can be configured to close automatically.
+  - **Profile Details** — shows the active profile's fan speed update frequency, moving average interval, and an interactive speed curve chart.
   - **Status** — shows live fan speed, temperature, moving average temperature, effective temperature, service active state, and whether the current profile is the default.
 - **Popup header** shows the currently active profile name and provides a refresh button and a reset-to-default button.
 - **Right-click context menu** provides *Refresh*, *Reload Configuration*, *Pause Service*, and *Resume Service* actions.
 - **Auto-refresh** — polls `fw-fanctrl --output-format JSON print` at a configurable interval (default 3 seconds) so the tooltip and Status tab stay current even if the profile is changed externally.
 - **Configurable options** — polling interval (1–10 seconds) and whether the popup closes automatically after selecting a profile.
-- **Icon colour** — the tray icon turns red on error and amber when the service is paused.
+- **Icon color** — the tray icon turns red on error and amber when the service is paused.
 - Error messages are shown inline so you can tell immediately if `fw-fanctrl` is missing or returns an error.
 
 ---
@@ -35,7 +36,7 @@ command-line tool.
 |---|---|
 | KDE Plasma 6 | Tested on Plasma 6.0+ |
 | `plasma5support` | Required for the executable DataSource engine. Standard Plasma 6 dependency. |
-| `qt6-5compat` | Required for icon colour overlay (`Qt5Compat.GraphicalEffects`). Package name: `qt6-5compat` on Arch, `qt6-qt5compat` on Fedora. Usually already installed as a Plasma dependency. |
+| `qt6-5compat` | Required for icon color overlay (`Qt5Compat.GraphicalEffects`). Package name: `qt6-5compat` on Arch, `qt6-qt5compat` on Fedora. Usually already installed as a Plasma dependency. |
 | `fw-fanctrl` | Must be in `$PATH`. Install from the [fw-fanctrl repo](https://github.com/TamtamHero/fw-fanctrl). |
 | Framework 16 laptop | The widget works with any machine where `fw-fanctrl` is installed, but is designed for the Framework 16. |
 

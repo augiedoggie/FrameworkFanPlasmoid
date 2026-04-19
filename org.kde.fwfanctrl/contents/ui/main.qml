@@ -24,7 +24,7 @@ PlasmoidItem {
     // ── Refresh interval: driven by user configuration ────────────────────
     property int refreshInterval: Plasmoid.configuration.pollingInterval * 1000
 
-    // ── Tint colour for error / paused states (error takes priority) ──────
+    // ── Tint color for error / paused states (error takes priority) ──────
     property color iconTint: {
         if (root.errorMessage !== "") return Kirigami.Theme.negativeTextColor
         if (!root.serviceActive) return Kirigami.Theme.neutralTextColor
@@ -287,7 +287,7 @@ PlasmoidItem {
                                 var cw = width  - padL - padR
                                 var ch = height - padT - padB
 
-                                // ── Colour helpers (theme-aware) ──────────
+                                // ── Color helpers (theme-aware) ──────────
                                 var textCol  = Kirigami.Theme.textColor
                                 var gridCol  = Qt.rgba(
                                     Kirigami.Theme.textColor.r,
