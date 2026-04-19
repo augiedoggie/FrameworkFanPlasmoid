@@ -260,7 +260,7 @@ PlasmoidItem {
                             function px(temp)  { return padL + (temp  / chartMaxTemp) * (width  - padL - padR) }
                             function py(speed) { return padT + (1 - speed / 100)      * (height - padT - padB) }
 
-                            // Repaint whenever profileInfo changes
+                            // Repaint whenever profileInfo or statusInfo changes
                             Connections {
                                 target: root
                                 function onProfileInfoChanged() {
@@ -272,6 +272,9 @@ PlasmoidItem {
                                         }
                                         speedCurveCanvas.chartMaxTemp = maxT
                                     }
+                                    speedCurveCanvas.requestPaint()
+                                }
+                                function onStatusInfoChanged() {
                                     speedCurveCanvas.requestPaint()
                                 }
                             }
@@ -347,6 +350,28 @@ PlasmoidItem {
                                     ctx.beginPath()
                                     ctx.arc(px(curve[i].temp), py(curve[i].speed), 3, 0, Math.PI * 2)
                                     ctx.fill()
+                                }
+
+                                // ── Current temperature / speed point ─────
+                                if (root.statusInfo &&
+                                    root.statusInfo.temperature !== undefined &&
+                                    root.statusInfo.speed !== undefined) {
+                                    var curTemp  = root.statusInfo.temperature
+                                    var curSpeed = root.statusInfo.speed
+                                    // Clamp to chart range so it stays visible
+                                    curTemp = Math.min(curTemp, chartMaxTemp)
+                                    ctx.strokeStyle = Kirigami.Theme.neutralTextColor
+                                    ctx.fillStyle   = Kirigami.Theme.neutralTextColor
+                                    ctx.lineWidth = 2
+                                    ctx.beginPath()
+                                    ctx.arc(px(curTemp), py(curSpeed), 5, 0, Math.PI * 2)
+                                    ctx.fill()
+                                    // White ring to make it stand out
+                                    ctx.strokeStyle = Kirigami.Theme.backgroundColor
+                                    ctx.lineWidth = 2
+                                    ctx.beginPath()
+                                    ctx.arc(px(curTemp), py(curSpeed), 5, 0, Math.PI * 2)
+                                    ctx.stroke()
                                 }
 
                                 // ── Y-axis labels (0, 50, 100 %) ─────────
