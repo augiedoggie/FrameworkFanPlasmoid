@@ -38,7 +38,12 @@ PlasmoidItem {
         ? "Loading…"
         : root.errorMessage !== ""
             ? "Error: " + root.errorMessage
-            : "Profile: " + root.currentProfile + (root.statusInfo ? "\nFan speed: " + root.statusInfo.speed + "%" : "")
+            : "Profile: " + root.currentProfile
+              + (root.statusInfo ? "\nFan speed: " + root.statusInfo.speed + "%"
+                 + "\nTemperature: " + root.statusInfo.temperature + " °C"
+                 + "\nMoving average: " + root.statusInfo.movingAverageTemperature + " °C"
+                 + "\nEffective temp: " + root.statusInfo.effectiveTemperature + " °C"
+                 : "")
 
     // ── Compact (tray icon) representation ────────────────────────────────
     compactRepresentation: Item {
