@@ -401,15 +401,19 @@ PlasmoidItem {
                                 acceptedButtons: Qt.NoButton
 
                                 property int hoveredIndex: -1
+                                // -1 = none, -2 = current status point, 0…n = curve points
 
                                 onPositionChanged: function(mouse) {
                                     if (!root.profileInfo || !root.profileInfo.speedCurve) {
                                         hoveredIndex = -1
                                         return
                                     }
+                                    var snapRadius = 12 * 12  // pixels²
                                     var curve = root.profileInfo.speedCurve
                                     var best = -1
-                                    var bestDist = 12 * 12  // snap radius in pixels²
+                                    var bestDist = snapRadius
+
+                                    // Check curve points
                                     for (var i = 0; i < curve.length; i++) {
                                         var dx = mouse.x - speedCurveCanvas.px(curve[i].temp)
                                         var dy = mouse.y - speedCurveCanvas.py(curve[i].speed)
@@ -419,23 +423,52 @@ PlasmoidItem {
                                             best = i
                                         }
                                     }
+
+                                    // Check current status point (larger dot so slightly wider snap)
+                                    if (root.statusInfo &&
+                                        root.statusInfo.temperature !== undefined &&
+                                        root.statusInfo.speed !== undefined) {
+                                        var curTemp = Math.min(root.statusInfo.temperature, speedCurveCanvas.chartMaxTemp)
+                                        var sdx = mouse.x - speedCurveCanvas.px(curTemp)
+                                        var sdy = mouse.y - speedCurveCanvas.py(root.statusInfo.speed)
+                                        var sdist = sdx * sdx + sdy * sdy
+                                        if (sdist < bestDist) {
+                                            bestDist = sdist
+                                            best = -2
+                                        }
+                                    }
+
                                     hoveredIndex = best
                                 }
 
                                 onExited: hoveredIndex = -1
 
                                 QQC2.ToolTip {
-                                    visible: chartMouseArea.hoveredIndex >= 0
-                                    x: chartMouseArea.hoveredIndex >= 0
-                                        ? speedCurveCanvas.px(root.profileInfo.speedCurve[chartMouseArea.hoveredIndex].temp) - width / 2
-                                        : 0
-                                    y: chartMouseArea.hoveredIndex >= 0
-                                        ? speedCurveCanvas.py(root.profileInfo.speedCurve[chartMouseArea.hoveredIndex].speed) - height - 6
-                                        : 0
+                                    visible: chartMouseArea.hoveredIndex >= -2 && chartMouseArea.hoveredIndex !== -1
+                                    x: {
+                                        if (chartMouseArea.hoveredIndex === -2 && root.statusInfo) {
+                                            var t = Math.min(root.statusInfo.temperature, speedCurveCanvas.chartMaxTemp)
+                                            return speedCurveCanvas.px(t) - width / 2
+                                        }
+                                        if (chartMouseArea.hoveredIndex >= 0)
+                                            return speedCurveCanvas.px(root.profileInfo.speedCurve[chartMouseArea.hoveredIndex].temp) - width / 2
+                                        return 0
+                                    }
+                                    y: {
+                                        if (chartMouseArea.hoveredIndex === -2 && root.statusInfo)
+                                            return speedCurveCanvas.py(root.statusInfo.speed) - height - 6
+                                        if (chartMouseArea.hoveredIndex >= 0)
+                                            return speedCurveCanvas.py(root.profileInfo.speedCurve[chartMouseArea.hoveredIndex].speed) - height - 6
+                                        return 0
+                                    }
                                     text: {
-                                        if (chartMouseArea.hoveredIndex < 0) return ""
-                                        var pt = root.profileInfo.speedCurve[chartMouseArea.hoveredIndex]
-                                        return pt.temp + " °C  —  " + pt.speed + "%"
+                                        if (chartMouseArea.hoveredIndex === -2 && root.statusInfo)
+                                            return root.statusInfo.temperature + " °C  —  " + root.statusInfo.speed + "%"
+                                        if (chartMouseArea.hoveredIndex >= 0) {
+                                            var pt = root.profileInfo.speedCurve[chartMouseArea.hoveredIndex]
+                                            return pt.temp + " °C  —  " + pt.speed + "%"
+                                        }
+                                        return ""
                                     }
                                 }
                             }
