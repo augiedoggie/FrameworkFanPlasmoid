@@ -143,7 +143,14 @@ PlasmoidItem {
         }
 
         contentItem: Item {
-            implicitWidth: Kirigami.Units.gridUnit * 16
+            // tabBar.implicitWidth can't be trusted: TabBar's contentItem is a
+            // ListView, whose contentWidth doesn't reliably reflect the full
+            // unwrapped width of its buttons. Sum the buttons' own implicitWidth
+            // (which already accounts for their background/padding) instead.
+            implicitWidth: Math.max(
+                Kirigami.Units.gridUnit * 16,
+                tabButtonProfiles.implicitWidth + tabButtonDetails.implicitWidth + tabButtonStatus.implicitWidth
+                    + tabBar.spacing * 2)
             implicitHeight: contentCol.implicitHeight + Kirigami.Units.largeSpacing * 2
 
             ColumnLayout {
@@ -171,23 +178,57 @@ PlasmoidItem {
                     Layout.fillWidth: true
 
                     PlasmaComponents.TabButton {
+                        id: tabButtonProfiles
                         text: "Fan Profiles"
+                        // Plasma's TabButton label hard-wraps (wrapMode: Text.Wrap)
+                        // whenever its rendered width dips below its own implicit
+                        // width, regardless of how much room the popup has. Force
+                        // a single line explicitly.
+                        contentItem: PlasmaComponents.Label {
+                            text: tabButtonProfiles.text
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            wrapMode: Text.NoWrap
+                        }
                     }
                     PlasmaComponents.TabButton {
+                        id: tabButtonDetails
                         text: "Profile Details"
+                        contentItem: PlasmaComponents.Label {
+                            text: tabButtonDetails.text
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            wrapMode: Text.NoWrap
+                        }
                     }
                     PlasmaComponents.TabButton {
+                        id: tabButtonStatus
                         text: "Status"
+                        contentItem: PlasmaComponents.Label {
+                            text: tabButtonStatus.text
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            wrapMode: Text.NoWrap
+                        }
                     }
                 }
 
                 // Tab content
                 StackLayout {
+                    id: tabStack
                     Layout.fillWidth: true
+                    // Pin the height to the tallest tab's content so the popup
+                    // doesn't resize when switching tabs (StackLayout's own
+                    // implicit size otherwise tracks only the current tab).
+                    Layout.preferredHeight: Math.max(
+                        tabContentProfiles.implicitHeight,
+                        tabContentDetails.implicitHeight,
+                        tabContentStatus.implicitHeight)
                     currentIndex: tabBar.currentIndex
 
                     // ── Tab 0: Available Profiles ─────────────────────────
                     ColumnLayout {
+                        id: tabContentProfiles
                         spacing: 0
 
                         PlasmaComponents.Label {
@@ -221,6 +262,7 @@ PlasmoidItem {
 
                     // ── Tab 1: Profile Details ────────────────────────────
                     ColumnLayout {
+                        id: tabContentDetails
                         spacing: Kirigami.Units.smallSpacing
 
                         PlasmaComponents.Label {
@@ -482,6 +524,7 @@ PlasmoidItem {
 
                     // ── Tab 2: Status ─────────────────────────────────────
                     ColumnLayout {
+                        id: tabContentStatus
                         spacing: Kirigami.Units.smallSpacing
 
                         PlasmaComponents.Label {
